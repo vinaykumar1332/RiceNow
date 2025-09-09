@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import "./Navbar.css";
 import {
   RiHome5Line,
-  RiInformationLine,
-  RiStackLine,
   RiMailLine,
   RiSunLine,
   RiMoonLine,
@@ -12,12 +11,14 @@ import {
   RiSearchLine,
 } from "react-icons/ri";
 import usePrefersColorScheme from "../../hooks/usePrefersColorScheme";
+import { BiBowlRice } from "react-icons/bi";
+import { BsCart2 } from "react-icons/bs";
 
 const NAV_LINKS = [
-  { key: "home", label: "Home", icon: <RiHome5Line /> },
-  { key: "about", label: "About", icon: <RiInformationLine /> },
-  { key: "services", label: "Services", icon: <RiStackLine /> },
-  { key: "contact", label: "Contact", icon: <RiMailLine /> },
+  { key: "home", label: "Home", icon: <RiHome5Line />, to: "/" },
+  { key: "services", label: "Products", icon: <BiBowlRice />, to: "/products" },
+  { key: "orders", label: "Orders", icon: <BsCart2 />, to: "/orders" },
+  { key: "contact", label: "Contact", icon: <RiMailLine />, to: "/contact" },
 ];
 
 export default function Navbar({ onSearch }) {
@@ -123,20 +124,17 @@ export default function Navbar({ onSearch }) {
           ref={navLinksRef}
         >
           {NAV_LINKS.map((ln) => (
-            <a
+            <Link
               key={ln.key}
-              href="#"
+              to={ln.to}
               className={`nav-link ${activeKey === ln.key ? "active" : ""}`}
-              onClick={(e) => {
-                e.preventDefault();
-                handleLinkClick(ln.key);
-              }}
+              onClick={() => handleLinkClick(ln.key)}
             >
               <i aria-hidden="true" className="nav-icon">
                 {ln.icon}
               </i>
               <span className="nav-label">{ln.label}</span>
-            </a>
+            </Link>
           ))}
 
           {/* SEARCH — visible on all screens; on mobile it appears inside the slide-down */}
