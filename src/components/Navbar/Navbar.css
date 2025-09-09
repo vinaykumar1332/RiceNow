@@ -34,7 +34,7 @@ body {
 }
 
 .nav-container {
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
@@ -160,11 +160,13 @@ body {
 .nav-link:hover::after,
 .nav-link.active::after {
     width: 100%;
+    max-width: 130px;
 }
 
 .nav-link:hover {
     background: var(--button-bg);
     color: var(--primary-color);
+    max-width: 130px;
 }
 
 .nav-link.active {
@@ -305,6 +307,7 @@ body {
         background: var(--button-bg);
         transform: none;
         box-shadow: none;
+        max-width: 130px;
     }
 
     .nav-actions {
@@ -515,4 +518,9 @@ body {
 .wheat-icon {
  font-size: 16px;
  padding: 0px 0.3rem;
+}
+
+.nav-logo-container{
+  display: flex;
+  align-items: center;
 }

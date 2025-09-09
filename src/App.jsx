@@ -1,16 +1,20 @@
-import React from 'react'
-import Navbar from './components/Navbar/Navbar'
+// App.jsx
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar/Navbar";
+import Home from "./pages/Home/Home"; // create or reuse a small Home component
+import MyOrders from "./pages/MyOrders/MyOrders";
 
 export default function App() {
   return (
-    <>
+    <BrowserRouter>
       <Navbar />
-      <main style={{ paddingTop: '90px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem' }}>
-          <h1>Welcome to Ricenow</h1>
-          <p>Page content goes here...</p>
-        </div>
+      <main style={{ paddingTop: "90px" }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/orders" element={<MyOrders />} />
+        </Routes>
       </main>
-    </>
-  )
+    </BrowserRouter>
+  );
 }
