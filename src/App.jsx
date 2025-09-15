@@ -2,14 +2,14 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
-import Home from "./pages/Home/Home"; // create or reuse a small Home component
+import Home from "./pages/Home/Home"; 
 import MyOrders from "./pages/MyOrders/MyOrders";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <main style={{ paddingTop: "90px" }}>
+      <main >
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/orders" element={<MyOrders />} />

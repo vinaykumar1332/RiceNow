@@ -1,5 +1,6 @@
+// src/components/Navbar/Navbar.jsx
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./Navbar.css";
 import {
   RiHome5Line,
@@ -21,19 +22,34 @@ const NAV_LINKS = [
   { key: "contact", label: "Contact", icon: <RiMailLine />, to: "/contact" },
 ];
 
+// helper to map pathname -> key
+function keyFromPath(pathname) {
+  if (!pathname) return "home";
+  // exact mapping (add more mappings if you have nested routes)
+  if (pathname === "/" || pathname === "") return "home";
+  if (pathname.startsWith("/products")) return "services";
+  if (pathname.startsWith("/orders")) return "orders";
+  if (pathname.startsWith("/contact")) return "contact";
+  return "home";
+}
+
 export default function Navbar({ onSearch }) {
   const prefersDark = usePrefersColorScheme();
+  const location = useLocation();
+
   const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") || (prefersDark ? "dark" : "light")
   );
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeKey, setActiveKey] = useState("home");
+  const [activeKey, setActiveKey] = useState(() =>
+    keyFromPath(window.location.pathname)
+  );
   const [query, setQuery] = useState("");
   const navLinksRef = useRef(null);
   const mobileBtnRef = useRef(null);
   const logoRef = useRef(null);
 
-  // set initial theme based on saved or system
+  // sync saved/system theme
   useEffect(() => {
     const saved = localStorage.getItem("theme");
     if (saved) setTheme(saved);
@@ -45,11 +61,17 @@ export default function Navbar({ onSearch }) {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // robust outside-click handler using refs
+  // sync activeKey with route changes (fixes paste-url / refresh case)
+  useEffect(() => {
+    setActiveKey(keyFromPath(location.pathname));
+    // close mobile menu when route changes
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  // outside click handler to close mobile slide-down
   useEffect(() => {
     function handler(e) {
       if (!mobileOpen) return;
-      // if click is inside navLinks or on mobile button, ignore
       if (
         navLinksRef.current?.contains(e.target) ||
         mobileBtnRef.current?.contains(e.target)
@@ -58,12 +80,11 @@ export default function Navbar({ onSearch }) {
       }
       setMobileOpen(false);
     }
-
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
   }, [mobileOpen]);
 
-  // logo shine mousemove (same as before)
+  // logo shine mousemove
   useEffect(() => {
     const logo = logoRef.current;
     if (!logo) return;
@@ -79,7 +100,7 @@ export default function Navbar({ onSearch }) {
   }, []);
 
   const toggleTheme = (e) => {
-    e.stopPropagation(); // avoid closing mobile accidentally
+    e.stopPropagation();
     setTheme((t) => (t === "light" ? "dark" : "light"));
   };
 
@@ -89,7 +110,7 @@ export default function Navbar({ onSearch }) {
   };
 
   const handleMenuToggle = (e) => {
-    e.stopPropagation(); // prevent document click from immediately closing
+    e.stopPropagation();
     setMobileOpen((s) => !s);
   };
 
@@ -97,38 +118,33 @@ export default function Navbar({ onSearch }) {
     e.preventDefault();
     if (onSearch) onSearch(query);
     else console.log("Search:", query);
-    // If you want to close the mobile menu after search, uncomment below:
-    // if (window.innerWidth <= 768) setMobileOpen(false)
   };
 
   return (
     <nav className="premium-nav" role="navigation" aria-label="Main navigation">
       <div className="nav-container">
-        <a
-          href="#"
-          className="nav-logo"
-          ref={logoRef}
-          aria-label="Ricenow logo"
-        >
+        {/* changed to Link to avoid full page reloads */}
+        <Link to="/" className="nav-logo" ref={logoRef} aria-label="Ricenow logo">
           <span className="logo-text">
             Rice
-            <i className="fa-solid fa-wheat-awn wheat-icon"></i>
+            <i className="fa-solid fa-wheat-awn wheat-icon" aria-hidden />
             now
           </span>
           <div className="logo-shine" />
-        </a>
+        </Link>
 
-        {/* nav links + search (nav-links becomes a slide-down panel on mobile) */}
         <div
           className={`nav-links ${mobileOpen ? "active" : ""}`}
           ref={navLinksRef}
         >
-          {NAV_LINKS.map((ln) => (
+          {NAV_LINKS.map((ln, idx) => (
             <Link
               key={ln.key}
               to={ln.to}
               className={`nav-link ${activeKey === ln.key ? "active" : ""}`}
               onClick={() => handleLinkClick(ln.key)}
+              // optionally set a CSS variable for stagger delay:
+              style={{ ["--delay"]: `${0.08 * (idx + 1)}s` }}
             >
               <i aria-hidden="true" className="nav-icon">
                 {ln.icon}
@@ -137,12 +153,12 @@ export default function Navbar({ onSearch }) {
             </Link>
           ))}
 
-          {/* SEARCH — visible on all screens; on mobile it appears inside the slide-down */}
           <div className="nav-search-wrapper">
             <form
               className="nav-search search-bar"
               role="search"
               onSubmit={handleSearchSubmit}
+              onClick={(e) => e.stopPropagation()}
             >
               <RiSearchLine className="search-icon" aria-hidden />
               <input
@@ -151,15 +167,11 @@ export default function Navbar({ onSearch }) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 aria-label="Search"
-                onClick={(e) =>
-                  e.stopPropagation()
-                } /* keep menu open when focusing */
               />
             </form>
           </div>
         </div>
 
-        {/* actions */}
         <div className="nav-actions">
           <button
             className="theme-toggle"
