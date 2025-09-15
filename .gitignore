@@ -18,4 +18,4 @@ dist-ssr
 .env.*.local
 
 
-src/api.js
+src/API.js
