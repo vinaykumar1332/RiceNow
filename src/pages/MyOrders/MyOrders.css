@@ -1,15 +1,20 @@
-/* MyOrders.css - Mobile-first, centered layout with responsive caps */
 
-/* Root container with CSS variables for reusable UI */
-.myorders-root {
-  --primary: #0ea5a4;
+:root {
+  --brand-primary: #6366f1;
+  --brand-accent: #d946ef;
+  --brand-on-primary: #ffffff;
+  --ui-bg: #ffffff;
+  --ui-text: #0f172a;
+
+  --primary: var(--brand-primary);
   --secondary: #0891b2;
-  --text-primary: #0f172a;
+  --text-primary: var(--ui-text);
   --text-secondary: #64748b;
   --text-muted: #6b7280;
   --text-dark-muted: #475569;
-  --bg-primary: #ffffff;
+  --bg-primary: var(--ui-bg);
   --bg-secondary: #f1f5f9;
+
   --error: #b91c1c;
   --shadow-sm: 0 6px 16px rgba(2, 6, 23, 0.03);
   --shadow-md: 0 6px 20px rgba(2, 6, 23, 0.06);
@@ -25,7 +30,7 @@
   --skeleton-bg: #f1f5f9;
   --skeleton-highlight: rgba(255, 255, 255, 0.6);
 
-  /* Status colors */
+  /* Status colors (kept as before) */
   --status-opened: #06b6d4;
   --status-opened-rgb: 6, 182, 212;
   --status-in-progress: #f59e0b;
@@ -40,22 +45,51 @@
   --status-returned-rgb: 124, 58, 237;
   --status-other: #64748b;
   --status-other-rgb: 100, 116, 139;
+}
 
+/* Dark theme overrides — toggled by data-theme="dark" on <html> */
+[data-theme="dark"] {
+  --brand-primary: #7c82ff;
+  --brand-accent: #ff7ac1;
+  --brand-on-primary: #071123;
+  --ui-bg: #071123;
+  --ui-text: #e6eef8;
+
+  --primary: var(--brand-primary);
+  --secondary: #0891b2;
+  /* optional */
+  --text-primary: var(--ui-text);
+  --text-secondary: #94a3b8;
+  --text-muted: #94a3b8;
+  --text-dark-muted: #cbd5e1;
+  --bg-primary: rgba(6, 8, 15, 0.8);
+  --bg-secondary: rgba(10, 14, 20, 0.6);
+
+  --skeleton-bg: rgba(255, 255, 255, 0.04);
+  --skeleton-highlight: rgba(255, 255, 255, 0.06);
+
+  /* optionally soften shadows in dark */
+  --shadow-sm: 0 6px 16px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.myorders-root {
   padding: var(--spacing-lg);
   max-width: 880px;
-  margin: 0 auto; /* centers on larger screens */
+  margin: 0 auto;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   color: var(--text-primary);
-  background: linear-gradient(180deg, #fbfdff 0%, #ffffff 100%);
-  min-height: 100vh;
+  box-sizing: border-box;
 }
-.myorders-root{
-/* ---------------- Search ---------------- */
+
 .search-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 14px;
+  width: 100%;
 }
 
 .search-bar {
@@ -68,6 +102,7 @@
   padding: 6px;
   box-shadow: var(--shadow-md);
   gap: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .search-bar input {
@@ -78,6 +113,7 @@
   font-size: 15px;
   color: var(--text-primary);
   border-radius: 10px;
+  background: transparent;
 }
 
 .clear-btn {
@@ -94,8 +130,8 @@
   height: 44px;
   border-radius: 10px;
   border: none;
-  background: linear-gradient(180deg, var(--primary), var(--secondary));
-  color: #fff;
+  background: linear-gradient(180deg, var(--primary), var(--brand-accent));
+  color: var(--brand-on-primary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -103,7 +139,7 @@
   box-shadow: 0 8px 20px rgba(3, 105, 119, 0.12);
 }
 
-/* small spinner inside search button */
+/* spinner inside button */
 .search-btn .loader {
   width: 16px;
   height: 16px;
@@ -112,7 +148,6 @@
   border-top-color: rgba(255, 255, 255, 0.28);
   animation: spin 1s linear infinite;
 }
-
 
 .error-msg {
   margin-top: var(--spacing-sm);
@@ -123,7 +158,9 @@
   align-items: center;
 }
 
-/* ---------------- Filters ---------------- */
+/* =========================
+   Filters
+   ========================= */
 .filter-bar {
   display: flex;
   gap: var(--spacing-sm);
@@ -132,12 +169,9 @@
   padding: 0.8rem;
   margin: var(--spacing-sm) 0 var(--spacing-md) 0;
   animation: fadeIn 0.5s ease-out;
-
-  @media (min-width: 600px) {
-    justify-content: center;
-  }
 }
 
+/* tags */
 .filter-tag {
   white-space: nowrap;
   border: none;
@@ -150,7 +184,7 @@
   color: var(--text-primary);
   box-shadow: var(--shadow-sm);
   transition: var(--transition);
-  border:1px solid;
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .filter-tag:hover {
@@ -159,46 +193,56 @@
 }
 
 .filter-tag.active {
-  color: #fff;
+  color: var(--brand-on-primary);
 }
 
+/* map active classes to status colors */
 .filter-tag.all.active {
   background: var(--primary);
 }
 
 .filter-tag.opened.active {
   background: var(--status-opened);
+  color: white;
 }
 
 .filter-tag.in-progress.active {
   background: var(--status-in-progress);
+  color: white;
 }
 
 .filter-tag.out-for-delivery.active {
   background: var(--status-out-for-delivery);
+  color: white;
 }
 
 .filter-tag.delivered.active {
   background: var(--status-delivered);
+  color: white;
 }
 
 .filter-tag.cancelled.active {
   background: var(--status-cancelled);
+  color: white;
 }
 
 .filter-tag.returned.active {
   background: var(--status-returned);
+  color: white;
 }
 
 .filter-tag.other.active {
   background: var(--status-other);
+  color: white;
 }
 
-/* ---------------- Results & Cards ---------------- */
+/* =========================
+   Order list & cards
+   ========================= */
 .order-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg); /* Increased gap for more space between cards */
+  gap: var(--spacing-lg);
   margin-bottom: 24px;
 }
 
@@ -206,22 +250,20 @@
   display: flex;
   gap: var(--spacing-md);
   align-items: center;
-  padding: var(--spacing-lg); /* Slightly increased padding for better spacing */
+  padding: var(--spacing-lg);
   background: var(--bg-primary);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-md);
-  animation: fadeIn 0.5s ease-in-out; /* Added fade-in animation for loading card */
+  animation: fadeIn 0.5s ease-in-out;
   color: var(--text-secondary);
 }
-
-
 
 .loading-dot {
   width: 12px;
   height: 12px;
   background: linear-gradient(90deg, var(--primary), var(--secondary));
   border-radius: 50%;
-  animation: bounce 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; /* Modern bounce animation */
+  animation: bounce 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
 }
 
 .loading-dot:nth-child(1) {
@@ -236,38 +278,30 @@
   animation-delay: 0.4s;
 }
 
-
 .empty-card {
   display: flex;
   gap: var(--spacing-md);
   align-items: center;
-  padding: var(--spacing-lg); /* Increased padding for consistency */
+  padding: var(--spacing-lg);
   background: var(--bg-primary);
   border-radius: var(--border-radius);
   color: var(--text-secondary);
   box-shadow: var(--shadow-sm);
-  animation: fadeIn 0.5s ease-in-out; /* Added fade-in for empty state */
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Skeleton loading */
+/* skeleton loading */
 .skeleton-card {
   animation: fadeIn 0.5s ease-in-out;
 }
 
 .skeleton {
   background-color: var(--skeleton-bg);
-  background-image: linear-gradient(
-    90deg,
-    var(--skeleton-bg) 25%,
-    var(--skeleton-highlight) 50%,
-    var(--skeleton-bg) 75%
-  );
+  background-image: linear-gradient(90deg, var(--skeleton-bg) 25%, var(--skeleton-highlight) 50%, var(--skeleton-bg) 75%);
   background-size: 300% 100%;
   animation: shimmer 1.8s ease-in-out infinite;
   border-radius: 4px;
 }
-
-
 
 .skeleton-text {
   height: 1.2em;
@@ -286,25 +320,28 @@
   width: 80%;
 }
 
-/* Individual order card */
+/* individual order card */
 .order-card {
-  padding: var(--spacing-lg); /* Increased padding for more internal space */
+  padding: var(--spacing-lg);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-lg);
-  transition: transform var(--transition), box-shadow var(--transition); /* Slightly longer transition for smoother feel */
+  transition: transform var(--transition), box-shadow var(--transition);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md); /* Increased internal gap for better spacing */
-  min-width: 280px; /* Added min-width to ensure cards don't get too small on narrow views */
-  max-width: 100%; /* Ensures cards don't exceed container width */
+  gap: var(--spacing-md);
+  min-width: 280px;
+  max-width: 100%;
   animation: fadeIn 0.3s ease-out;
+  background: var(--bg-primary);
 }
 
+/* hover lift */
 .order-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-hover);
 }
 
+/* status-based variants */
 .order-card.opened {
   background: rgba(var(--status-opened-rgb), 0.08);
   border-left: 4px solid var(--status-opened);
@@ -340,6 +377,7 @@
   border-left: 4px solid var(--status-other);
 }
 
+/* top row of card */
 .order-top {
   display: flex;
   justify-content: space-between;
@@ -397,7 +435,7 @@
   color: var(--status-other);
 }
 
-/* main row: brand vs price */
+/* main row */
 .order-main {
   display: flex;
   justify-content: space-between;
@@ -415,7 +453,7 @@
   font-weight: 800;
 }
 
-/* meta row */
+/* metadata */
 .order-meta {
   font-size: 13px;
   color: var(--text-dark-muted);
@@ -433,7 +471,7 @@
   margin-top: 4px;
 }
 
-/* actions */
+/* actions (hide by default, show in desktop or when needed) */
 .order-actions {
   display: none;
   justify-content: flex-end;
@@ -458,23 +496,40 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Responsive: keep container centered and with side spacing on larger screens */
+/* =========================
+   Responsive adjustments
+   ========================= */
+@media (min-width: 600px) {
+  .filter-bar {
+    justify-content: center;
+  }
+}
+
 @media (min-width: 840px) {
   .myorders-root {
     padding: 28px;
   }
+
   .search-bar {
     max-width: 720px;
   }
+
   .order-list {
-    gap: 20px; /* Further increased gap for desktop */
+    gap: 20px;
   }
+
   .order-card {
-    padding: 20px; /* More padding on larger screens for better card size */
+    padding: 20px;
   }
+
+  .order-actions {
+    display: flex;
+  }
+
+  /* show actions on larger screens */
 }
 
-/* accessible focus */
+/* focus styles for accessibility */
 .search-bar input:focus,
 .filter-tag:focus,
 .download-btn:focus,
@@ -482,39 +537,53 @@
   outline: none;
   box-shadow: 0 6px 24px rgba(14, 165, 164, 0.08);
 }
-}
 
+/* =========================
+   Animations & Keyframes
+   ========================= */
 @keyframes shimmer {
   0% {
     background-position: 100% 0;
   }
+
   100% {
     background-position: 0 0;
   }
 }
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
 @keyframes bounce {
+
   0%,
   100% {
     transform: translateY(0);
     opacity: 0.7;
   }
+
   50% {
     transform: translateY(-8px);
     opacity: 1;
   }
+}
+
+/* small utility */
+.hidden {
+  display: none !important;
 }
